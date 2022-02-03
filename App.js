@@ -10,10 +10,12 @@ import {
   //disabled, longpress 시간을 더 정교하게 설정 가능
   TextInput,
   ScrollView,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { theme } from "./colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Entypo } from "@expo/vector-icons";
 
 const STORAGE_KEY = "@toDos";
 export default function App() {
@@ -49,6 +51,22 @@ export default function App() {
     setText("");
   };
   console.log(toDos);
+  const deleteToDos = async (key) => {
+    Alert.alert("Delete To Do", "Are you sure?", [
+      { text: "Cancel" },
+      {
+        text: "I'm Sure",
+        style: "destructive",
+        onPress: async () => {
+          const newToDos = { ...toDos };
+          delete newToDos[key];
+          setToDos(newToDos);
+          await saveToDos(newToDos);
+        },
+      },
+    ]);
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -85,6 +103,10 @@ export default function App() {
           toDos[key].working === working ? (
             <View style={styles.toDo} key={key}>
               <Text style={styles.toDoText}>{toDos[key].text}</Text>
+
+              <TouchableOpacity onPress={() => deleteToDos(key)}>
+                <Entypo name="trash" size={24} color="white" />
+              </TouchableOpacity>
             </View>
           ) : null
         )}
@@ -125,6 +147,9 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 20,
     borderRadius: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   toDoText: {
     color: "white",
