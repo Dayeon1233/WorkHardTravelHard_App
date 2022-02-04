@@ -35,7 +35,9 @@ export default function App() {
 
   const loadToDos = async () => {
     const s = await AsyncStorage.getItem(STORAGE_KEY);
-    setToDos(JSON.parse(s));
+    if (s) {
+      setToDos(JSON.parse(s));
+    }
   };
 
   const addToDo = async () => {
@@ -50,7 +52,7 @@ export default function App() {
     await saveToDos(newToDos);
     setText("");
   };
-  console.log(toDos);
+
   const deleteToDos = async (key) => {
     Alert.alert("Delete To Do", "Are you sure?", [
       { text: "Cancel" },
